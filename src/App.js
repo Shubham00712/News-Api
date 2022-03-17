@@ -1,25 +1,29 @@
-import logo from './logo.svg';
+import React from 'react'
+import Navbar from './Navbar'
+import News from './News'
 import './App.css';
+import { searchNews,showHeadlines } from './action'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  componentDidMount() {
+    const store=this.props.store
+    store.subscribe(()=>{
+      console.log("updated")
+      this.forceUpdate()
+    })
+    store.dispatch(searchNews("*"))
+    store.dispatch(showHeadlines())
+    console.log(store.getState())
+  }
+  render() {
+    const { news,newsLoaded,headlinesLoaded,headlines }=this.props.store.getState()
+    return (
+      <div className="main-container">
+        <Navbar dispatch={this.props.store.dispatch}/>
+        <News news={news} newsLoaded={newsLoaded} headlinesLoaded={headlinesLoaded} headlines={headlines}/>
+      </div>
+    );
+}
 }
 
 export default App;
